@@ -19,7 +19,8 @@ bme280 = BME280(i2c_dev=bus)
 
 while True:
     temperature = bme280.get_temperature()
+    fahrenheit = 9.0/5.0 * temperature + 32
     pressure = bme280.get_pressure()
     humidity = bme280.get_humidity()
-    print('{:05.2f}*C {:05.2f}hPa {:05.2f}%'.format(temperature, pressure, humidity))
+    print('{:05.2f}*C {:05.2f}*F {:05.2f}hPa {:05.2f}%'.format(temperature, fahrenheit, pressure, humidity))
     time.sleep(1)
