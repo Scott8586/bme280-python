@@ -17,6 +17,10 @@ Press Ctrl+C to exit!
 bus = SMBus(1)
 bme280 = BME280(i2c_dev=bus)
 
+bme280.setup()
+
+print('bme280 unique identifier: {:x}'.format(bme280.unique_id))
+
 while True:
     temperature = bme280.get_temperature()
     fahrenheit = 9.0/5.0 * temperature + 32

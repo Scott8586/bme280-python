@@ -121,6 +121,9 @@ class BME280:
         self._i2c_addr = i2c_addr
         self._i2c_dev = i2c_dev
         self._bme280 = Device([I2C_ADDRESS_GND, I2C_ADDRESS_VCC], i2c_dev=self._i2c_dev, bit_width=8, registers=(
+            Register('UNIQUE_ID', 0x83, fields=(
+                BitField('unique_id', 0xFFFFFFFF),
+            ), bit_width=4*8),
             Register('CHIP_ID', 0xD0, fields=(
                 BitField('id', 0xFF),
             )),
@@ -222,6 +225,13 @@ class BME280:
                 raise RuntimeError("Unable to find bme280 on 0x{:02x}, CHIP_ID returned {:02x}".format(self._i2c_addr, chip.id))
         except IOError:
             raise RuntimeError("Unable to find bme280 on 0x{:02x}, IOError".format(self._i2c_addr))
+
+        try:
+            chip = self._bme280.get('UNIQUE_ID')
+            self.unique_id = chip.unique_id
+#            print("Found bme280 on 0x{:02x}, UNIQUE_ID returned {:02x}".format(self._i2c_addr, chip.unique_id))
+        except IOError:
+            raise RuntimeError("Unable to find bme280 unique id on 0x{:02x}, IOError".format(self._i2c_addr))
 
         self._bme280.set('RESET', reset=0xB6)
         time.sleep(0.1)
